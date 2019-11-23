@@ -17,8 +17,9 @@ var db *sql.DB
 func main() {
 	db = DB()
 
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/user/", userHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc("/user/", userHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -92,12 +93,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type User struct {
-	id         int
-	name       string
-	password   string
-	created_at time.Time
-	updated_at time.Time
-	deleted_at time.Time
+	id        int
+	name      string
+	password  string
+	createdAt time.Time
+	updatedAt time.Time
+	deletedAt time.Time
 }
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
@@ -119,7 +120,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 	buf := bytes.NewBufferString("USER:\n")
 	for rows.Next() {
 		user := User{}
-		if err := rows.Scan(&user.id, &user.name, &user.password, &user.created_at, &user.updated_at, &user.deleted_at); err != nil {
+		if err := rows.Scan(&user.id, &user.name, &user.password, &user.createdAt, &user.updatedAt, &user.deletedAt); err != nil {
 			log.Printf("Could not scan result: %v", err)
 			http.Error(w, "Internal Error", 500)
 			return
