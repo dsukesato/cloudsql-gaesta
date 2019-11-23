@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -17,6 +18,7 @@ func main() {
 	db = DB()
 
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/user/", userHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -85,6 +87,44 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Fprintf(buf, "- %s\n", dbName)
+	}
+	w.Write(buf.Bytes())
+}
+
+type User struct {
+	id         int
+	name       string
+	password   string
+	created_at time.Time
+	updated_at time.Time
+	deleted_at time.Time
+}
+
+func userHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/user/" {
+		http.NotFound(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+
+	rows, err := db.Query("SELECT * FROM USER")
+	if err != nil {
+		log.Printf("Could not query db: %v", err)
+		http.Error(w, "Internal Error", 500)
+		return
+	}
+	defer rows.Close()
+
+	buf := bytes.NewBufferString("USER:\n")
+	for rows.Next() {
+		user := User{}
+		if err := rows.Scan(&user.id, &user.name, &user.password, &user.created_at, &user.updated_at, &user.deleted_at); err != nil {
+			log.Printf("Could not scan result: %v", err)
+			http.Error(w, "Internal Error", 500)
+			return
+		}
+		fmt.Fprintf(buf, "- %s\n", user.name)
 	}
 	w.Write(buf.Bytes())
 }
