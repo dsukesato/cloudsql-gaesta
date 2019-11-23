@@ -18,8 +18,8 @@ func main() {
 	db = DB()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", userHandler)
-	//mux.HandleFunc("/user/", userHandler)
+	mux.HandleFunc("/", indexHandler)
+	mux.HandleFunc("/user/", userHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -71,7 +71,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain")
 
-	rows, err := db.Query("SHOW DATABASES")
+	rows, err := db.Query("show tables")
 	if err != nil {
 		log.Printf("Could not query db: %v", err)
 		http.Error(w, "Internal Error", 500)
@@ -98,18 +98,18 @@ type User struct {
 	password  string
 	createdAt time.Time
 	updatedAt time.Time
-	deletedAt time.Time
+	deletedAt *time.Time
 }
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	if r.URL.Path != "/user/" {
 		http.NotFound(w, r)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
 
-	rows, err := db.Query("SELECT * FROM user where id = ?", 1)
+	rows, err := db.Query("select * from user" + " where id = ?",1)
 	if err != nil {
 		log.Printf("Could not query db: %v", err)
 		http.Error(w, "Internal Error", 500)
