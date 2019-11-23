@@ -102,7 +102,7 @@ type User struct {
 }
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/user/" {
+	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
