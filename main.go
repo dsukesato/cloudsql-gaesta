@@ -18,8 +18,8 @@ func main() {
 	db = DB()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", indexHandler)
-	mux.HandleFunc("/user/", userHandler)
+	mux.HandleFunc("/", userHandler)
+	//mux.HandleFunc("/user/", userHandler)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
