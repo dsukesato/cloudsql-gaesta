@@ -41,6 +41,10 @@ func DB() *sql.DB {
 		socket         = os.Getenv("CLOUDSQL_SOCKET_PREFIX")
 	)
 
+	if dbName == "" {
+		dbName = "pbl_test"
+	}
+
 	// /cloudsql is used on App Engine.
 	if socket == "" {
 		socket = "/cloudsql"
