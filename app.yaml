@@ -8,3 +8,4 @@ env_variables:
   # Replace username and password if you aren't using the root user.
   CLOUDSQL_USER: root
   CLOUDSQL_PASSWORD: test
+  CLOUDSQL_DATABASE: pbl_test
