@@ -109,7 +109,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain")
 
-	rows, err := db.Query("select * from user where id = ?",1)
+	rows, err := db.Query("select * from user where id = ?", 1)
 	if err != nil {
 		log.Printf("Could not query db: %v", err)
 		http.Error(w, "Internal Error", 500)
